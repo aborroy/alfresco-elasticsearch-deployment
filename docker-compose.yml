@@ -27,6 +27,7 @@ services:
         -Ddb.url=jdbc:postgresql://postgres:5432/alfresco
         -Dindex.subsystem.name=elasticsearch
         -Delasticsearch.host=elasticsearch
+        -Delasticsearch.port=9200
         -Delasticsearch.indexName=${ELASTICSEARCH_INDEX_NAME}
         -Dshare.host=127.0.0.1
         -Dshare.port=8080
@@ -86,21 +87,6 @@ services:
     volumes:
       - shared-file-store-volume:/tmp/Alfresco/sfs
 
-  share:
-    image: quay.io/alfresco/alfresco-share:${SHARE_TAG}
-    mem_limit: 1g
-    environment:
-      REPO_HOST: "alfresco"
-      REPO_PORT: "8080"
-      JAVA_OPTS: "
-        -Xms500m
-        -Xmx500m
-        -Dalfresco.host=localhost
-        -Dalfresco.port=8080
-        -Dalfresco.context=alfresco
-        -Dalfresco.protocol=http
-        "
-
   postgres:
     image: postgres:${POSTGRES_TAG}
     mem_limit: 512m
@@ -129,16 +115,18 @@ services:
 
   # HTTP proxy to provide HTTP Default port access to services
   proxy:
-    image: quay.io/alfresco/alfresco-acs-nginx:${ACS_NGINX_TAG}
+    image: alfresco/alfresco-acs-nginx:${ACS_NGINX_TAG}
     mem_limit: 128m
     depends_on:
       - alfresco
+    environment:
+      DISABLE_SHARE: "true"
+      DISABLE_SYNCSERVICE: "true"
     ports:
       - 8080:8080
     links:
       - digital-workspace
       - alfresco
-      - share
 
   elasticsearch:
     image: elasticsearch:${ELASTICSEARCH_TAG}
