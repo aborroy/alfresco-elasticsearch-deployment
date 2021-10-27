@@ -11,9 +11,21 @@ Docker Images from [quay.io](https://quay.io/organization/alfresco) are used, si
 
 ## Docker Compose
 
-Regular Alfresco Docker Compose template is provided, but using a waiting script for `reindexing` application: [wait.sh](reindexing/wait.sh)
+Docker Compose template includes following files:
 
-This will start the [ESC Reindexing Application](https://docs.alfresco.com/search-enterprise/latest/config/#alfresco-re-indexing-app) once Alfresco Repository is ready.
+```
+.
+├── docker-compose.yml
+├── indexing
+│   └── reindex.prefixes-file.json
+└── reindexing
+    ├── Dockerfile
+    └── wait.sh
+```
+
+* `docker-compose.yml` is a regular ACS Docker Compose, including Elasticsearch Connector (indexing and reindexing services) and Elasticsearch server with Kibana
+* `indexing/reindex.prefixes-file.json` is a mapping file build with https://github.com/AlfrescoLabs/model-ns-prefix-mapping project. This file is required when indexing an Alfresco Repository including customized models
+* `reindexing` folder includes a waiting script for Reindexing application: [wait.sh](reindexing/wait.sh). This will start the [ESC Reindexing Application](https://docs.alfresco.com/search-enterprise/latest/config/#alfresco-re-indexing-app) once Alfresco Repository is ready.
 
 ## Using
 
